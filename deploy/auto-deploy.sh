@@ -54,12 +54,21 @@ fi
     (cd "$DESTINO" && sudo -u www-data composer install --no-interaction --no-progress --no-dev 2>&1 | tail -3)
   fi
 
-  # 2. Assets front (public/resources e gitignored -> build local + copia)
-  if [ ! -d "$DESTINO/public/resources/bootswatch5" ]; then
-    echo "assets ausentes -> build"
-    [ -d "$REPO/node_modules" ] || (cd "$REPO" && sudo -u abracadabra npm install --no-audit --no-fund 2>&1 | tail -2)
-    (cd "$REPO" && sudo -u abracadabra npx gulp default 2>&1 | tail -2)
-    rsync -a "$REPO/public/resources/" "$DESTINO/public/resources/"
+  # 2. Assets front: `gulp default` faz DUAS coisas -> gera public/resources/ E injeta
+  #    os <script>/<link> nos Views (app/Views/partial/header.php, app/Views/login.php).
+  #    Sem a injecao os blocos <!-- inject:prod:* --> ficam VAZIOS e a UI quebra
+  #    (sem jQuery, sem CSS do OSPOS). Por isso roda SEMPRE, nao so quando falta asset.
+  echo "gulp: gerando assets + injetando nos Views"
+  [ -d "$REPO/node_modules" ] || (cd "$REPO" && sudo -u abracadabra npm install --no-audit --no-fund 2>&1 | tail -2)
+  (cd "$REPO" && sudo -u abracadabra npx gulp default 2>&1 | tail -3)
+  rsync -a "$REPO/public/resources/" "$DESTINO/public/resources/"
+  # gulp injeta os <script>/<link> nos Views do REPO -> copiar para o destino
+  rsync -a "$REPO/app/Views/partial/header.php" "$DESTINO/app/Views/partial/header.php"
+  rsync -a "$REPO/app/Views/login.php" "$DESTINO/app/Views/login.php"
+  chown www-data:www-data "$DESTINO/app/Views/partial/header.php" "$DESTINO/app/Views/login.php"
+  # guarda de seguranca: View com bloco de injecao vazio = UI quebrada
+  if ! grep -q '<script src' "$DESTINO/app/Views/partial/header.php"; then
+    echo "ERRO: header.php sem <script> injetado - abortando antes do healthcheck"
   fi
 
   mkdir -p "$DESTINO/writable/cache" "$DESTINO/writable/logs" "$DESTINO/writable/session" "$DESTINO/writable/uploads"
