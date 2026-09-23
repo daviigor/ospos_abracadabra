@@ -46,6 +46,44 @@ for a in "resources/opensourcepos-c3c51fd7e7.min.css" "resources/opensourcepos-f
 done
 
 echo
+echo "[4b] INJECAO DO BUILD nos Views (o ponto cego que quebrou 3x)"
+# `gulp default` injeta os <script>/<link> entre os marcadores <!-- inject:prod:* -->.
+# Se o gulp nao rodar, o arquivo de asset EXISTE e o teste [4] passa verde,
+# mas o HTML nao o referencia -> sem jQuery, sem CSS -> UI quebrada.
+# Aqui o teste e no CONTEUDO: quantas tags o HTML realmente emite.
+NEST=$(curl -s -H "Host: sys.severinus.com.br" http://127.0.0.1:8084/login | grep -c '<script src\|<link rel="stylesheet"')
+echo "    tags no HTML do login: $NEST"
+if [ "$NEST" -lt 3 ]; then
+  echo "    >>> PROBLEMA ENCONTRADO: HTML do login quase sem tags de asset"
+  echo "        Causa: gulp nao rodou / Views com bloco de injecao VAZIO"
+  echo "        CORRECAO: cd /home/abracadabra/ospos-fork && npx gulp default"
+  echo "                  depois redeploy (o auto-deploy ja roda gulp a cada vez)"
+  echo
+  echo "[4c] estado dos Views no destino"
+  echo "    header.php: $(grep -c '<script src' /var/www/ospos/app/Views/partial/header.php) scripts"
+  echo "    login.php:  $(grep -c '<script src' /var/www/ospos/app/Views/login.php) scripts"
+  echo "    (esperado: header ~37, login 3)"
+  exit 1
+fi
+
+echo
+echo "[4d] jQuery presente no login (sem ele o layout colapsa)"
+if ! curl -s -H "Host: sys.severinus.com.br" http://127.0.0.1:8084/login | grep -q 'jquery'; then
+  echo "    >>> PROBLEMA ENCONTRADO: login sem jQuery"
+  exit 1
+fi
+echo "    OK"
+
+echo
+echo "[4e] logotipo configurado existe no disco"
+LOGO=$(MYSQL_PWD=pointofsale mysql -h127.0.0.1 -P3307 -uroot -N -e "SELECT value FROM pdv_severinus.ospos_app_config WHERE \`key\`='company_logo';" 2>/dev/null)
+if [ -n "$LOGO" ]; then
+  LC=$(curl -s -H "Host: sys.severinus.com.br" -o /dev/null -w '%{http_code}' "http://127.0.0.1:8084/uploads/$LOGO")
+  echo "    uploads/$LOGO -> $LC"
+  [ "$LC" != "200" ] && echo "    >>> PROBLEMA: logo configurado no banco mas arquivo ausente (uploads/ e gitignored)"
+fi
+
+echo
 echo "[5] externo (via Cloudflare)"
 E=$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 25 https://sys.severinus.com.br/login)
 echo "    https://sys.severinus.com.br/login -> $E"
