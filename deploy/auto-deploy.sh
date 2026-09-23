@@ -44,7 +44,7 @@ fi
   # SEM --delete: nunca remove vendor/, writable/ nem public/resources/ (gerados aqui)
   rsync -a \
     --exclude='node_modules' --exclude='.env' \
-    --exclude='writable/*' --exclude='.git' \
+    --exclude='writable/*' --exclude='.git' --exclude='public/uploads/*' \
     "$REPO"/ "$DESTINO"/
   rm -rf "$DESTINO/.git"
 
