@@ -77,9 +77,11 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             'honeypot',
-            'csrf' => ['except' => 'login|migrate'],
-            'invalidchars',
-            'isLoggedIn' => ['except' => 'login|migrate'],
+            // api/* nao usa CSRF de sessao: a autenticacao e o Bearer JWT.
+            'csrf' => ['except' => 'login|migrate|api/*'],
+            'invalidchars' => ['except' => 'api/*'],
+            // api/* nao usa sessao: idem, quem barra e o JWT no controller.
+            'isLoggedIn' => ['except' => 'login|migrate|api/*'],
         ],
         'after' => [
             'toolbar',
