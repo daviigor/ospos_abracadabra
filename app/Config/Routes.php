@@ -14,6 +14,7 @@ $routes->post('migrate', 'Login::migrate');
 $routes->post('api/auth/token', 'Api\Auth_controller::postToken');
 
 $routes->get('api/itens/(:num)', 'Api\Itens_controller::getIndex/$1');
+$routes->get('api/itens', 'Api\Itens_controller::getIndex');
 $routes->post('api/itens', 'Api\Itens_controller::postIndex');
 $routes->put('api/itens/(:num)', 'Api\Itens_controller::putIndex/$1');
 $routes->patch('api/itens/(:num)', 'Api\Itens_controller::putIndex/$1');

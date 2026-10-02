@@ -21,6 +21,18 @@ const { createInterface } = require('readline');
 
 const TOOLS = [
     {
+        name: 'pdv_buscar_itens',
+        description: 'Lista/busca itens do PDV (paginado). Use antes de alterar, para descobrir o id.',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                search: { type: 'string', description: 'texto a procurar em nome, codigo ou categoria' },
+                limit: { type: 'integer', description: 'quantos trazer (1-100, padrao 20)' },
+                offset: { type: 'integer', description: 'a partir de qual (padrao 0)' },
+            },
+        },
+    },
+    {
         name: 'pdv_obter_item',
         description: 'Le um item do PDV pelo id. Retorna nome, precos, estoque.',
         inputSchema: {
@@ -102,6 +114,15 @@ async function api(metodo, caminho, corpo) {
 /** Executa uma tool e devolve o texto que a IA le. */
 async function executar(nome, args) {
     switch (nome) {
+        case 'pdv_buscar_itens': {
+            const qs = new URLSearchParams();
+            if (args.search) qs.set('search', args.search);
+            if (args.limit) qs.set('limit', args.limit);
+            if (args.offset) qs.set('offset', args.offset);
+            const sufixo = qs.toString() ? `?${qs}` : '';
+            return api('GET', `/itens${sufixo}`);
+        }
+
         case 'pdv_obter_item':
             return api('GET', `/itens/${args.id}`);
 

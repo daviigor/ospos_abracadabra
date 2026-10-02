@@ -77,11 +77,12 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             'honeypot',
-            // api/* nao usa CSRF de sessao: a autenticacao e o Bearer JWT.
-            'csrf' => ['except' => 'login|migrate|api/*'],
-            'invalidchars' => ['except' => 'api/*'],
-            // api/* nao usa sessao: idem, quem barra e o JWT no controller.
-            'isLoggedIn' => ['except' => 'login|migrate|api/*'],
+            // api/* e mcp sao publicos de proposito: o que barra e o Bearer JWT
+            // (rotas de dados) ou nada (paginas de documentacao). Sem sessao e
+            // sem CSRF, que quebrariam chamadas de IA.
+            'csrf' => ['except' => 'login|migrate|api*|mcp'],
+            'invalidchars' => ['except' => 'api*|mcp'],
+            'isLoggedIn' => ['except' => 'login|migrate|api*|mcp'],
         ],
         'after' => [
             'toolbar',
