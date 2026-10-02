@@ -20,7 +20,7 @@ use CodeIgniter\HTTP\DownloadResponse;
 use CodeIgniter\Validation\FormatRules;
 use Config\Database;
 use Config\OSPOS;
-use Config\Severinus;
+use Config\Pdv;
 use Config\Services;
 use Exception;
 use ReflectionException;
@@ -642,7 +642,7 @@ class Items extends Secure_Controller
 
         $taxNamesInput = $this->request->getPost('tax_names');
 
-        if (!empty($taxNamesInput) && config(Severinus::class)->tax_name_required) {
+        if (!empty($taxNamesInput) && config(Pdv::class)->tax_name_required) {
             $rules = [
                 'tax_names.*' => 'required|max_length[255]|unicode_alpha_numeric_punct',
             ];
@@ -667,7 +667,7 @@ class Items extends Secure_Controller
     {
         $taxNamesInput = $this->request->getPost('tax_names');
 
-        if (!empty($taxNamesInput) && config(Severinus::class)->tax_name_required) {
+        if (!empty($taxNamesInput) && config(Pdv::class)->tax_name_required) {
             $rules = [
                 'tax_names.*' => 'max_length[255]|unicode_alpha_numeric_punct',
             ];
