@@ -20,6 +20,61 @@ $routes->put('api/itens/(:num)', 'Api\Itens_controller::putIndex/$1');
 $routes->patch('api/itens/(:num)', 'Api\Itens_controller::putIndex/$1');
 $routes->delete('api/itens/(:num)', 'Api\Itens_controller::deleteIndex/$1');
 
+$routes->get('api/vendas/(:num)', 'Api\Vendas_controller::getIndex/$1');
+$routes->get('api/vendas', 'Api\Vendas_controller::getIndex');
+$routes->post('api/vendas', 'Api\Vendas_controller::postIndex');
+$routes->delete('api/vendas/(:num)', 'Api\Vendas_controller::deleteIndex/$1');
+
+$routes->get('api/atributos/(:segment)/sugerir', 'Api\Atributos_controller::getIndex/$1/sugerir');
+$routes->get('api/atributos/valores', 'Api\Atributos_controller::getIndex');
+$routes->post('api/atributos/valores', 'Api\Atributos_controller::postValor');
+$routes->delete('api/atributos/valores', 'Api\Atributos_controller::deleteValor');
+$routes->get('api/atributos/(:num)', 'Api\Atributos_controller::getIndex/$1');
+$routes->get('api/atributos', 'Api\Atributos_controller::getIndex');
+$routes->post('api/atributos', 'Api\Atributos_controller::postIndex');
+$routes->patch('api/atributos/(:num)', 'Api\Atributos_controller::putIndex/$1');
+$routes->delete('api/atributos/(:num)', 'Api\Atributos_controller::deleteIndex/$1');
+
+$routes->get('api/clientes/(:num)/sugerir', 'Api\Clientes_controller::getIndex/$1/sugerir');
+$routes->get('api/clientes/(:num)', 'Api\Clientes_controller::getIndex/$1');
+$routes->get('api/clientes', 'Api\Clientes_controller::getIndex');
+$routes->post('api/clientes', 'Api\Clientes_controller::postIndex');
+$routes->patch('api/clientes/(:num)', 'Api\Clientes_controller::putIndex/$1');
+$routes->delete('api/clientes/(:num)', 'Api\Clientes_controller::deleteIndex/$1');
+
+$routes->get('api/fornecedores/categorias', 'Api\Fornecedores_controller::getIndex/0/categorias');
+$routes->get('api/fornecedores/(:num)', 'Api\Fornecedores_controller::getIndex/$1');
+$routes->get('api/fornecedores', 'Api\Fornecedores_controller::getIndex');
+$routes->post('api/fornecedores', 'Api\Fornecedores_controller::postIndex');
+$routes->patch('api/fornecedores/(:num)', 'Api\Fornecedores_controller::putIndex/$1');
+$routes->delete('api/fornecedores/(:num)', 'Api\Fornecedores_controller::deleteIndex/$1');
+
+$routes->get('api/recebimentos/opcoes', 'Api\Recebimentos_controller::getIndex/0/opcoes');
+$routes->get('api/recebimentos/(:num)', 'Api\Recebimentos_controller::getIndex/$1');
+$routes->get('api/recebimentos', 'Api\Recebimentos_controller::getIndex');
+$routes->post('api/recebimentos', 'Api\Recebimentos_controller::postIndex');
+$routes->delete('api/recebimentos/(:num)', 'Api\Recebimentos_controller::deleteIndex/$1');
+
+$routes->get('api/despesas/categorias', 'Api\Despesas_controller::getIndex/0/categorias');
+$routes->post('api/despesas/categorias', 'Api\Despesas_controller::postCategoria');
+$routes->patch('api/despesas/categorias/(:num)', 'Api\Despesas_controller::putCategoria/$1');
+$routes->delete('api/despesas/categorias/(:num)', 'Api\Despesas_controller::deleteCategoria/$1');
+$routes->get('api/despesas/opcoes', 'Api\Despesas_controller::getIndex/0/opcoes');
+$routes->get('api/despesas/(:num)', 'Api\Despesas_controller::getIndex/$1');
+$routes->get('api/despesas', 'Api\Despesas_controller::getIndex');
+$routes->post('api/despesas', 'Api\Despesas_controller::postIndex');
+$routes->patch('api/despesas/(:num)', 'Api\Despesas_controller::putIndex/$1');
+$routes->delete('api/despesas/(:num)', 'Api\Despesas_controller::deleteIndex/$1');
+
+$routes->get('api/giftcards/proximo-numero', 'Api\Giftcards_controller::getIndex/0/proximo-numero');
+$routes->get('api/giftcards/saldo/(:segment)', 'Api\Giftcards_controller::getIndex/$1/saldo');
+$routes->post('api/giftcards/(:segment)/recarregar', 'Api\Giftcards_controller::postRecarregar/$1');
+$routes->get('api/giftcards/(:num)', 'Api\Giftcards_controller::getIndex/$1');
+$routes->get('api/giftcards', 'Api\Giftcards_controller::getIndex');
+$routes->post('api/giftcards', 'Api\Giftcards_controller::postIndex');
+$routes->patch('api/giftcards/(:num)', 'Api\Giftcards_controller::putIndex/$1');
+$routes->delete('api/giftcards/(:num)', 'Api\Giftcards_controller::deleteIndex/$1');
+
 // documentacao navegavel dentro do proprio PDV
 $routes->get('api', 'Api\Docs_controller::getIndex');
 $routes->get('mcp', 'Api\Docs_controller::getMcp');

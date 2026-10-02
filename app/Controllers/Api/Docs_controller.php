@@ -63,7 +63,315 @@ class Docs_controller extends Api_base_controller
                 'metodo' => 'DELETE', 'rota' => '/api/itens/{id}',
                 'grant' => 'items', 'desc' => 'Exclui (soft delete), igual ao PDV.',
                 'corpo' => '—',
-                'curl' => "curl -s -X DELETE {$base}/api/itens/1 -H 'Authorization: Bearer <TOKEN>'",
+                'curl' => "curl -s -X DELETE {$base}/api/itens/1 -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/atributos',
+                'grant' => 'attributes', 'desc' => 'Catalogo de definicoes (nome, unidade, tipo, flags).',
+                'corpo' => '—',
+                'curl' => "curl -s {$base}/api/atributos -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/atributos/{item_id}',
+                'grant' => 'attributes', 'desc' => 'Valores de atributo de um item. Parametro: definicao.',
+                'corpo' => '—',
+                'curl' => "curl -s \"{$base}/api/atributos/5?definicao=7\" -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'POST', 'rota' => '/api/atributos',
+                'grant' => 'attributes', 'desc' => 'Cria definicao. Retorna 201 com o id.',
+                'corpo' => '{"nome":"Voltagem","unidade":"V","tipo":"DROPDOWN","flags":[1],"valores":["110","220"]}',
+                'curl' => "curl -s -X POST {$base}/api/atributos \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"nome":"Voltagem","tipo":"DROPDOWN","flags":[1]}\'',
+            ],
+            [
+                'metodo' => 'PATCH', 'rota' => '/api/atributos/{id}',
+                'grant' => 'attributes', 'desc' => 'Altera a definicao.',
+                'corpo' => '{"nome":"Voltagem (V)"}',
+                'curl' => "curl -s -X PATCH {$base}/api/atributos/7 \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"nome":"Voltagem (V)"}\'',
+            ],
+            [
+                'metodo' => 'DELETE', 'rota' => '/api/atributos/{id}',
+                'grant' => 'attributes', 'desc' => 'Apaga a definicao (soft delete).',
+                'corpo' => '—',
+                'curl' => "curl -s -X DELETE {$base}/api/atributos/7 -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'POST', 'rota' => '/api/atributos/valores',
+                'grant' => 'attributes', 'desc' => 'Grava o valor de um atributo num item.',
+                'corpo' => '{"item_id":5,"definicao_id":7,"valor":"220"}',
+                'curl' => "curl -s -X POST {$base}/api/atributos/valores \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"item_id":5,"definicao_id":7,"valor":"220"}\'',
+            ],
+            [
+                'metodo' => 'DELETE', 'rota' => '/api/atributos/valores',
+                'grant' => 'attributes', 'desc' => 'Apaga um valor de dropdown pelo par valor+definicao_id.',
+                'corpo' => '{"valor":"220","definicao_id":7}',
+                'curl' => "curl -s -X DELETE {$base}/api/atributos/valores \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"valor":"220","definicao_id":7}\'',
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/clientes',
+                'grant' => 'customers', 'desc' => 'Lista/busca clientes. Parametros: search, limit, offset.',
+                'corpo' => '—',
+                'curl' => "curl -s \"{$base}/api/clientes?search=joao&limit=20\" -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/clientes/{id}',
+                'grant' => 'customers', 'desc' => 'Ficha do cliente + estatisticas de compra.',
+                'corpo' => '—',
+                'curl' => "curl -s {$base}/api/clientes/12 -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'POST', 'rota' => '/api/clientes',
+                'grant' => 'customers', 'desc' => 'Cria cliente (pessoa + dados comerciais). 201 com o id.',
+                'corpo' => '{"nome":"Loja do Zé","sobrenome":"Ferragens","cnpj":"12345678000199","fantasia":"Zé Ferragens","email":"ze@ex.com","telefone":"17999990000"}',
+                'curl' => "curl -s -X POST {$base}/api/clientes \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"nome":"Loja do Zé","cnpj":"12345678000199","email":"ze@ex.com"}\'',
+            ],
+            [
+                'metodo' => 'PATCH', 'rota' => '/api/clientes/{id}',
+                'grant' => 'customers', 'desc' => 'Altera so os campos enviados.',
+                'corpo' => '{"telefone":"17988887777"}',
+                'curl' => "curl -s -X PATCH {$base}/api/clientes/12 \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"telefone":"17988887777"}\'',
+            ],
+            [
+                'metodo' => 'DELETE', 'rota' => '/api/clientes/{id}',
+                'grant' => 'customers', 'desc' => 'Apaga o cliente (soft delete).',
+                'corpo' => '—',
+                'curl' => "curl -s -X DELETE {$base}/api/clientes/12 -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/fornecedores',
+                'grant' => 'suppliers', 'desc' => 'Lista/busca fornecedores. Parametros: search, limit, offset, categoria.',
+                'corpo' => '—',
+                'curl' => "curl -s \"{$base}/api/fornecedores?search=acme\" -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/fornecedores/{id}',
+                'grant' => 'suppliers', 'desc' => 'Ficha do fornecedor.',
+                'corpo' => '—',
+                'curl' => "curl -s {$base}/api/fornecedores/4 -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/fornecedores/categorias',
+                'grant' => 'suppliers', 'desc' => 'Tipos de fornecedor (mercadoria, servico...).',
+                'corpo' => '—',
+                'curl' => "curl -s {$base}/api/fornecedores/categorias -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'POST', 'rota' => '/api/fornecedores',
+                'grant' => 'suppliers', 'desc' => 'Cria fornecedor. 201 com o id.',
+                'corpo' => '{"nome":"ACME Ltda","cnpj":"98765432000155","fantasia":"ACME","email":"vendas@acme.com"}',
+                'curl' => "curl -s -X POST {$base}/api/fornecedores \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"nome":"ACME Ltda","cnpj":"98765432000155"}\'',
+            ],
+            [
+                'metodo' => 'PATCH', 'rota' => '/api/fornecedores/{id}',
+                'grant' => 'suppliers', 'desc' => 'Altera so os campos enviados.',
+                'corpo' => '{"telefone":"1733332222"}',
+                'curl' => "curl -s -X PATCH {$base}/api/fornecedores/4 \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"telefone":"1733332222"}\'',
+            ],
+            [
+                'metodo' => 'DELETE', 'rota' => '/api/fornecedores/{id}',
+                'grant' => 'suppliers', 'desc' => 'Apaga o fornecedor (soft delete).',
+                'corpo' => '—',
+                'curl' => "curl -s -X DELETE {$base}/api/fornecedores/4 -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/vendas',
+                'grant' => 'reports_sales', 'desc' => 'Lista/busca vendas. Parametros: search, limit, offset.',
+                'corpo' => '—',
+                'curl' => "curl -s \"{$base}/api/vendas?limit=20\" -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/vendas/{id}',
+                'grant' => 'reports_sales', 'desc' => 'Cabecalho, itens e pagamentos de uma venda.',
+                'corpo' => '—',
+                'curl' => "curl -s {$base}/api/vendas/1 -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'POST', 'rota' => '/api/vendas',
+                'grant' => 'sales',
+                'desc' => 'Grava venda, cotacao, fatura ou devolucao. tipo = venda|cotacao|fatura|devolucao. '
+                    . 'Na devolucao use devolucao_de: "POS 123" (a venda original).',
+                'corpo' => '{"tipo":"venda","cliente_id":12,"local_id":1,'
+                    . '"itens":[{"item_id":5,"quantidade":"2","preco":"19.90","desconto":"0"}],'
+                    . '"pagamentos":[{"tipo":"Dinheiro","valor":"39.80"}]}',
+                'curl' => "curl -s -X POST {$base}/api/vendas \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"tipo":"venda","itens":[{"item_id":5,"quantidade":"2","preco":"19.90"}],'
+                    . '"pagamentos":[{"tipo":"Dinheiro","valor":"39.80"}]}\'',
+            ],
+            [
+                'metodo' => 'DELETE', 'rota' => '/api/vendas/{id}',
+                'grant' => 'sales_delete', 'desc' => 'Cancela a venda e devolve o estoque.',
+                'corpo' => '—',
+                'curl' => "curl -s -X DELETE {$base}/api/vendas/1 -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/recebimentos',
+                'grant' => 'receivings', 'desc' => 'Lista recebimentos. Parametros: search, limit, offset.',
+                'corpo' => '—',
+                'curl' => "curl -s \"{$base}/api/recebimentos?limit=20\" -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/recebimentos/{id}',
+                'grant' => 'receivings', 'desc' => 'Cabecalho e itens de um recebimento.',
+                'corpo' => '—',
+                'curl' => "curl -s {$base}/api/recebimentos/1 -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/recebimentos/opcoes',
+                'grant' => 'receivings', 'desc' => 'Locais, fornecedores e formas de pagamento.',
+                'corpo' => '—',
+                'curl' => "curl -s {$base}/api/recebimentos/opcoes -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'POST', 'rota' => '/api/recebimentos',
+                'grant' => 'receivings',
+                'desc' => 'Grava recebimento de compra (tipo=recebimento), requisicao/transferencia '
+                    . '(tipo=requisicao, com origem_id e destino_id) ou devolucao ao fornecedor (tipo=devolucao).',
+                'corpo' => '{"tipo":"recebimento","fornecedor_id":4,"local_id":1,"referencia":"NF 123",'
+                    . '"itens":[{"item_id":5,"quantidade":"10","custo":"12.50"}]}',
+                'curl' => "curl -s -X POST {$base}/api/recebimentos \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"tipo":"recebimento","fornecedor_id":4,"local_id":1,'
+                    . '"itens":[{"item_id":5,"quantidade":"10","custo":"12.50"}]}\'',
+            ],
+            [
+                'metodo' => 'DELETE', 'rota' => '/api/recebimentos/{id}',
+                'grant' => 'receivings_delete', 'desc' => 'Cancela o recebimento e estorna o estoque.',
+                'corpo' => '—',
+                'curl' => "curl -s -X DELETE {$base}/api/recebimentos/1 -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/despesas',
+                'grant' => 'expenses',
+                'desc' => 'Lista/busca despesas. Parametros: search, data_inicio, data_fim, categoria, pagamento, limit, offset.',
+                'corpo' => '—',
+                'curl' => "curl -s \"{$base}/api/despesas?data_inicio=2026-01-01&data_fim=2026-12-31\" -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/despesas/{id}',
+                'grant' => 'expenses', 'desc' => 'Uma despesa + seus pagamentos.',
+                'corpo' => '—',
+                'curl' => "curl -s {$base}/api/despesas/1 -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'POST', 'rota' => '/api/despesas',
+                'grant' => 'expenses', 'desc' => 'Lanca uma despesa. 201 com o id.',
+                'corpo' => '{"valor":"250.00","categoria_id":3,"descricao":"Energia","pagamento":"Transferencia","imposto":"0"}',
+                'curl' => "curl -s -X POST {$base}/api/despesas \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"valor":"250.00","categoria_id":3,"descricao":"Energia"}\'',
+            ],
+            [
+                'metodo' => 'PATCH', 'rota' => '/api/despesas/{id}',
+                'grant' => 'expenses', 'desc' => 'Altera so os campos enviados.',
+                'corpo' => '{"valor":"260.00"}',
+                'curl' => "curl -s -X PATCH {$base}/api/despesas/1 \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"valor":"260.00"}\'',
+            ],
+            [
+                'metodo' => 'DELETE', 'rota' => '/api/despesas/{id}',
+                'grant' => 'expenses', 'desc' => 'Apaga a despesa.',
+                'corpo' => '—',
+                'curl' => "curl -s -X DELETE {$base}/api/despesas/1 -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/despesas/categorias',
+                'grant' => 'expenses', 'desc' => 'Lista as categorias de despesa.',
+                'corpo' => '—',
+                'curl' => "curl -s {$base}/api/despesas/categorias -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'POST', 'rota' => '/api/despesas/categorias',
+                'grant' => 'expenses_categories', 'desc' => 'Cria categoria de despesa.',
+                'corpo' => '{"nome":"Frete","descricao":"Fretes e carretos"}',
+                'curl' => "curl -s -X POST {$base}/api/despesas/categorias \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"nome":"Frete"}\'',
+            ],
+            [
+                'metodo' => 'PATCH', 'rota' => '/api/despesas/categorias/{id}',
+                'grant' => 'expenses_categories', 'desc' => 'Altera a categoria.',
+                'corpo' => '{"nome":"Frete e carreto"}',
+                'curl' => "curl -s -X PATCH {$base}/api/despesas/categorias/3 \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"nome":"Frete e carreto"}\'',
+            ],
+            [
+                'metodo' => 'DELETE', 'rota' => '/api/despesas/categorias/{id}',
+                'grant' => 'expenses_categories', 'desc' => 'Apaga a categoria (bloqueia se estiver em uso).',
+                'corpo' => '—',
+                'curl' => "curl -s -X DELETE {$base}/api/despesas/categorias/3 -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/giftcards',
+                'grant' => 'giftcards', 'desc' => 'Lista/busca cartoes presente. Parametros: search, limit, offset.',
+                'corpo' => '—',
+                'curl' => "curl -s \"{$base}/api/giftcards?search=100\" -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/giftcards/{id}',
+                'grant' => 'giftcards', 'desc' => 'Dados de um cartao.',
+                'corpo' => '—',
+                'curl' => "curl -s {$base}/api/giftcards/1 -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/giftcards/saldo/{numero}',
+                'grant' => 'giftcards', 'desc' => 'Saldo atual de um cartao pelo numero.',
+                'corpo' => '—',
+                'curl' => "curl -s {$base}/api/giftcards/saldo/1001 -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'GET', 'rota' => '/api/giftcards/proximo-numero',
+                'grant' => 'giftcards', 'desc' => 'Sugere o proximo numero de cartao livre.',
+                'corpo' => '—',
+                'curl' => "curl -s {$base}/api/giftcards/proximo-numero -H 'Authorization: Bearer ***'",
+            ],
+            [
+                'metodo' => 'POST', 'rota' => '/api/giftcards',
+                'grant' => 'giftcards', 'desc' => 'Cria cartao com valor inicial. 201 com o id.',
+                'corpo' => '{"valor":"100.00","cliente_id":12}',
+                'curl' => "curl -s -X POST {$base}/api/giftcards \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"valor":"100.00","cliente_id":12}\'',
+            ],
+            [
+                'metodo' => 'POST', 'rota' => '/api/giftcards/{numero}/recarregar',
+                'grant' => 'giftcards', 'desc' => 'Soma valor ao saldo do cartao.',
+                'corpo' => '{"valor":"50.00"}',
+                'curl' => "curl -s -X POST {$base}/api/giftcards/1001/recarregar \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"valor":"50.00"}\'',
+            ],
+            [
+                'metodo' => 'PATCH', 'rota' => '/api/giftcards/{id}',
+                'grant' => 'giftcards', 'desc' => 'Altera numero, saldo ou dono do cartao.',
+                'corpo' => '{"cliente_id":13}',
+                'curl' => "curl -s -X PATCH {$base}/api/giftcards/1 \\\\\\n"
+                    . "  -H 'Authorization: Bearer ***' -H 'Content-Type: application/json' \\\\\\n"
+                    . '  -d \'{"cliente_id":13}\'',
+            ],
+            [
+                'metodo' => 'DELETE', 'rota' => '/api/giftcards/{id}',
+                'grant' => 'giftcards', 'desc' => 'Apaga o cartao (soft delete).',
+                'corpo' => '—',
+                'curl' => "curl -s -X DELETE {$base}/api/giftcards/1 -H 'Authorization: Bearer ***'",
             ],
         ];
 
@@ -198,11 +506,36 @@ comando <code>node /caminho/para/servidor-mcp-pdv.js</code>.</p>
 
 <h2>Ferramentas expostas</h2>
 <ul class="codes">
+  <li><code>pdv_buscar_itens</code> — lista/busca itens (paginado)</li>
   <li><code>pdv_obter_item</code> — le um item pelo id</li>
   <li><code>pdv_criar_item</code> — cria item</li>
   <li><code>pdv_alterar_item</code> — altera campos do item</li>
   <li><code>pdv_excluir_item</code> — exclui (soft delete)</li>
+  <li><code>pdv_buscar_clientes</code> — lista/busca clientes</li>
+  <li><code>pdv_obter_cliente</code> — ficha do cliente</li>
+  <li><code>pdv_criar_cliente</code> — cria cliente (PJ: nome = razao social, fantasia = nome fantasia, cnpj = CNPJ)</li>
+  <li><code>pdv_alterar_cliente</code> — altera campos do cliente</li>
+  <li><code>pdv_buscar_fornecedores</code> — lista/busca fornecedores</li>
+  <li><code>pdv_criar_fornecedor</code> — cria fornecedor</li>
+  <li><code>pdv_buscar_atributos</code> — lista definicoes de atributo (Voltagem, Cor, Tamanho...)</li>
+  <li><code>pdv_obter_atributos_item</code> — valores de atributo de um item</li>
+  <li><code>pdv_gravar_atributo_item</code> — grava valor de atributo num item</li>
+  <li><code>pdv_buscar_vendas</code> — lista/busca vendas gravadas</li>
+  <li><code>pdv_obter_venda</code> — itens e pagamentos de uma venda</li>
+  <li><code>pdv_gravar_venda</code> — grava venda, cotacao, fatura (fiado) ou devolucao</li>
+  <li><code>pdv_buscar_recebimentos</code> — lista recebimentos de compra</li>
+  <li><code>pdv_obter_recebimento</code> — itens e custos de um recebimento</li>
+  <li><code>pdv_gravar_recebimento</code> — recebimento de compra, requisicao ou devolucao ao fornecedor</li>
+  <li><code>pdv_buscar_despesas</code> — lista/busca despesas por periodo e categoria</li>
+  <li><code>pdv_lancar_despesa</code> — lanca despesa</li>
+  <li><code>pdv_buscar_categorias_despesa</code> — categorias de despesa</li>
+  <li><code>pdv_buscar_giftcards</code> — lista cartoes presente</li>
+  <li><code>pdv_saldo_giftcard</code> — saldo do cartao pelo numero</li>
+  <li><code>pdv_criar_giftcard</code> — cria cartao com valor inicial</li>
+  <li><code>pdv_recarregar_giftcard</code> — soma valor ao saldo</li>
 </ul>
+<p class="ret">Sao 27 tools. Todas batem nas rotas de <a href="{$base}/api">{$base}/api</a> — mesmas permissoes
+do usuario do PDV cujo token foi colado no arquivo. Os mesmos numeros do Swagger.</p>
 
 <h2>Credenciais</h2>
 <p>
