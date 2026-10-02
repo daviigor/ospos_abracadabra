@@ -1,0 +1,171 @@
+== base: http://127.0.0.1:8085  codigo: T-F3-PROVA-1790685689 ==
+-- 1) POST criar
+{
+    "success": true,
+    "item_id": 10,
+    "item": {
+        "name": "PROVA F3",
+        "category": "",
+        "supplier_id": null,
+        "item_number": "T-F3-PROVA-1790685689",
+        "description": "",
+        "cost_price": "10.50",
+        "unit_price": "19.90",
+        "reorder_level": "0.000",
+        "receiving_quantity": "1.000",
+        "item_id": "10",
+        "pic_filename": null,
+        "allow_alt_description": "0",
+        "is_serialized": "0",
+        "deleted": "0",
+        "stock_type": "0",
+        "item_type": "0",
+        "tax_category_id": null,
+        "qty_per_pack": "1.000",
+        "pack_name": "Each",
+        "low_sell_item_id": "10",
+        "hsn_code": "",
+        "attribute_values": null,
+        "attribute_dvalues": null,
+        "attribute_dtvalues": null
+    }
+}
+HTTP 201
+OK   POST criar -> HTTP 201
+   id=10
+-- 2) GET ler
+{
+    "success": true,
+    "item": {
+        "name": "PROVA F3",
+        "category": "",
+        "supplier_id": null,
+        "item_number": "T-F3-PROVA-1790685689",
+        "description": "",
+        "cost_price": "10.50",
+        "unit_price": "19.90",
+        "reorder_level": "0.000",
+        "receiving_quantity": "1.000",
+        "item_id": "10",
+        "pic_filename": null,
+        "allow_alt_description": "0",
+        "is_serialized": "0",
+        "deleted": "0",
+        "stock_type": "0",
+        "item_type": "0",
+        "tax_category_id": null,
+        "qty_per_pack": "1.000",
+        "pack_name": "Each",
+        "low_sell_item_id": "10",
+        "hsn_code": "",
+        "attribute_values": null,
+        "attribute_dvalues": null,
+        "attribute_dtvalues": null
+    }
+}
+HTTP 200
+OK   GET ler -> HTTP 200
+-- 3) PATCH alterar so o preco
+{
+    "success": true,
+    "item_id": 10,
+    "item": {
+        "name": "PROVA F3",
+        "category": "",
+        "supplier_id": null,
+        "item_number": "T-F3-PROVA-1790685689",
+        "description": "",
+        "cost_price": "10.50",
+        "unit_price": "24.90",
+        "reorder_level": "0.000",
+        "receiving_quantity": "1.000",
+        "item_id": "10",
+        "pic_filename": null,
+        "allow_alt_description": "0",
+        "is_serialized": "0",
+        "deleted": "0",
+        "stock_type": "0",
+        "item_type": "0",
+        "tax_category_id": null,
+        "qty_per_pack": "1.000",
+        "pack_name": "Each",
+        "low_sell_item_id": "10",
+        "hsn_code": "",
+        "attribute_values": null,
+        "attribute_dvalues": null,
+        "attribute_dtvalues": null
+    }
+}
+HTTP 200
+OK   PATCH preco -> HTTP 200
+-- 4) PUT alterar nome
+{
+    "success": true,
+    "item_id": 10,
+    "item": {
+        "name": "PROVA F3 ALTERADA",
+        "category": "",
+        "supplier_id": null,
+        "item_number": "T-F3-PROVA-1790685689",
+        "description": "",
+        "cost_price": "10.50",
+        "unit_price": "24.90",
+        "reorder_level": "0.000",
+        "receiving_quantity": "1.000",
+        "item_id": "10",
+        "pic_filename": null,
+        "allow_alt_description": "0",
+        "is_serialized": "0",
+        "deleted": "0",
+        "stock_type": "0",
+        "item_type": "0",
+        "tax_category_id": null,
+        "qty_per_pack": "1.000",
+        "pack_name": "Each",
+        "low_sell_item_id": "10",
+        "hsn_code": "",
+        "attribute_values": null,
+        "attribute_dvalues": null,
+        "attribute_dtvalues": null
+    }
+}
+HTTP 200
+OK   PUT nome -> HTTP 200
+-- 5) DELETE excluir (soft)
+{
+    "success": true,
+    "message": "item excluido: 10",
+    "item_id": 10
+}
+HTTP 200
+OK   DELETE excluir -> HTTP 200
+-- 6) GET apos excluir -> 404
+{
+    "success": false,
+    "message": "item nao encontrado: 10"
+}
+HTTP 404
+OK   GET apos excluir -> HTTP 404
+-- 7) GET id inexistente -> 404
+{
+    "success": false,
+    "message": "item nao encontrado: 999999"
+}
+HTTP 404
+OK   GET inexistente -> HTTP 404
+-- 8) POST codigo repetido -> 409
+{
+    "success": false,
+    "message": "codigo de barras ja cadastrado: TESTE-001"
+}
+HTTP 409
+OK   codigo repetido -> HTTP 409
+-- 9) POST sem name -> 400
+{
+    "success": false,
+    "message": "campo obrigatorio: name"
+}
+HTTP 400
+OK   sem name -> HTTP 400
+
+RESULTADO: TODOS OS 9 CENARIOS PASSARAM
