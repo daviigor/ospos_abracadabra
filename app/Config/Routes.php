@@ -10,6 +10,13 @@ $routes->get('login', 'Login::index');
 $routes->post('login', 'Login::index');
 $routes->post('migrate', 'Login::migrate');
 
+// API JSON (usada pelo app/sync). Sem CSRF de sessao; ver app/Config/Filters.php.
+$routes->get('api/itens/(:num)', 'Api\Itens_controller::getIndex/$1');
+$routes->post('api/itens', 'Api\Itens_controller::postIndex');
+$routes->put('api/itens/(:num)', 'Api\Itens_controller::putIndex/$1');
+$routes->patch('api/itens/(:num)', 'Api\Itens_controller::putIndex/$1');
+$routes->delete('api/itens/(:num)', 'Api\Itens_controller::deleteIndex/$1');
+
 $routes->add('no_access/index/(:segment)', 'No_access::index/$1');
 $routes->add('no_access/index/(:segment)/(:segment)', 'No_access::index/$1/$2');
 
