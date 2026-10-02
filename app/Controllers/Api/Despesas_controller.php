@@ -64,10 +64,19 @@ class Despesas_controller extends Api_base_controller
         $limit = max(1, min((int) ($this->request->getGet('limit') ?? 20), 100));
         $offset = max(0, (int) ($this->request->getGet('offset') ?? 0));
 
-        // mesmos filtros que a tela de gestao manda
+        // mesmos filtros que a tela de gestao manda. Sem data informada, usa o ano corrente:
+        // Expense::search() sempre filtra por BETWEEN e data vazia zera o resultado.
+        $hoje = date('Y-m-d');
+
         $filtros = [
-            'start_date'          => (string) ($this->request->getGet('data_inicio') ?? ''),
-            'end_date'            => (string) ($this->request->getGet('data_fim') ?? ''),
+            'start_date'          => (string) ($this->request->getGet('data_inicio') ?? '') ?: date('Y-01-01'),
+            'end_date'            => (string) ($this->request->getGet('data_fim') ?? '') ?: $hoje,
+            'is_deleted'          => false,
+            'only_cash'           => false,
+            'only_credit'         => false,
+            'only_debit'          => false,
+            'only_check'          => false,
+            'only_due'            => false,
             'expense_category_id' => (string) ($this->request->getGet('categoria') ?? ''),
             'payment_type'        => (string) ($this->request->getGet('pagamento') ?? ''),
         ];

@@ -180,10 +180,11 @@ class Fornecedores_controller extends Api_base_controller
             'comments'     => (string) ($c['observacoes'] ?? $c['comments'] ?? ($atual['comments'] ?? '')),
         ];
 
+        // schema do OSPOS: company_name/agency_name/account_number sao NOT NULL no MySQL real
         $supplierData = [
-            'company_name'  => trim((string) ($c['fantasia'] ?? $c['company_name'] ?? ($atual['company_name'] ?? ''))) ?: null,
-            'agency_name'   => trim((string) ($c['agencia'] ?? $c['agency_name'] ?? ($atual['agency_name'] ?? ''))) ?: null,
-            'account_number' => trim((string) ($c['conta'] ?? $c['account_number'] ?? ($atual['account_number'] ?? ''))) ?: null,
+            'company_name'  => trim((string) ($c['fantasia'] ?? $c['company_name'] ?? $c['nome'] ?? ($atual['company_name'] ?? ''))),
+            'agency_name'   => trim((string) ($c['agencia'] ?? $c['agency_name'] ?? ($atual['agency_name'] ?? ''))),
+            'account_number' => trim((string) ($c['conta'] ?? $c['account_number'] ?? ($atual['account_number'] ?? ''))),
             'tax_id'        => trim((string) ($c['cnpj'] ?? $c['tax_id'] ?? ($atual['tax_id'] ?? ''))),
             'category'      => (int) ($c['categoria'] ?? $c['category'] ?? ($atual['category'] ?? GOODS_SUPPLIER)),
         ];

@@ -80,14 +80,15 @@ class Recebimentos_controller extends Api_base_controller
         $offset = max(0, (int) ($this->request->getGet('offset') ?? 0));
 
         $db = db_connect();
-        $builder = $db->table('receivings');
+        $pref = $db->getPrefix();
+        $builder = $db->table($pref . 'receivings AS receivings');
         $builder->select('receivings.receiving_id, receivings.receiving_time, receivings.reference,
             receivings.comment, receivings.payment_type,
             CONCAT(people.first_name, " ", people.last_name) AS supplier_name, people.person_id AS supplier_id,
             (SELECT SUM(ri.quantity_purchased * ri.item_unit_price)
-               FROM ' . $db->prefixTable('receivings_items') . ' AS ri
+               FROM ' . $pref . 'receivings_items AS ri
               WHERE ri.receiving_id = receivings.receiving_id) AS total', false);
-        $builder->join('people', 'people.person_id = receivings.supplier_id', 'left');
+        $builder->join($pref . 'people AS people', 'people.person_id = receivings.supplier_id', 'left');
 
         if ($busca !== '') {
             $builder->groupStart()

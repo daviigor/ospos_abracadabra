@@ -81,14 +81,15 @@ class Vendas_controller extends Api_base_controller
         $offset = max(0, (int) ($this->request->getGet('offset') ?? 0));
 
         $db = db_connect();
-        $builder = $db->table('sales');
+        $pref = $db->getPrefix();
+        $builder = $db->table($pref . 'sales AS sales');
         $builder->select('sales.sale_id, sales.sale_time, sales.invoice_number, sales.quote_number,
             sales.sale_status, sales.sale_type, sales.comment,
             CONCAT(people.first_name, " ", people.last_name) AS customer_name,
-            (SELECT SUM(sales_items.quantity_purchased * sales_items.item_unit_price)
-               FROM ' . $db->prefixTable('sales_items') . ' AS sales_items
-              WHERE sales_items.sale_id = sales.sale_id) AS total', false);
-        $builder->join('people', 'people.person_id = sales.customer_id', 'left');
+            (SELECT SUM(si.quantity_purchased * si.item_unit_price)
+               FROM ' . $pref . 'sales_items AS si
+              WHERE si.sale_id = sales.sale_id) AS total', false);
+        $builder->join($pref . 'people AS people', 'people.person_id = sales.customer_id', 'left');
 
         if ($busca !== '') {
             $builder->groupStart()
@@ -145,7 +146,9 @@ class Vendas_controller extends Api_base_controller
         [$mode, $saleType] = self::TIPOS[$tipo];
 
         $itens = $c['itens'] ?? [];
-        if (!is_array($itens) || $itens === []) {
+        // devolucao: return_entire_sale() clona os itens da venda original,
+        // entao a lista vem vazia de proposito
+        if ($tipo !== 'devolucao' && (!is_array($itens) || $itens === [])) {
             return $this->erro('informe itens: [{item_id, quantidade, preco, desconto}]');
         }
 
@@ -173,12 +176,16 @@ class Vendas_controller extends Api_base_controller
         if ($tipo === 'devolucao') {
             // A devolucao do PDV e a venda original clonada com quantidade
             // negativa. Aceita a mesma referencia da tela: "POS 123".
+            // Numero puro ("338") tambem vale: isValidReceipt() so reconhece o
+            // formato "POS 338" ou o numero da fatura, entao normalizamos aqui.
             $referencia = trim((string) ($c['devolucao_de'] ?? ''));
             if ($referencia === '') {
                 return $this->erro('informe devolucao_de, ex: "POS 123"');
             }
+            if (ctype_digit($referencia)) {
+                $referencia = 'POS ' . $referencia;
+            }
             // isValidReceipt() recebe a referencia por referencia e a normaliza
-            // quando vem so o numero ("123" -> "POS 123")
             if (!$this->sale->isValidReceipt($referencia)) {
                 return $this->erro("venda nao encontrada: {$referencia}", 404);
             }
@@ -211,12 +218,16 @@ class Vendas_controller extends Api_base_controller
                 $serie = isset($linha['serial']) ? (string) $linha['serial'] : null;
 
                 // mesmo add_item da tela: valida item, calcula total, aplica
-                // desconto e monta a linha do carrinho
+                // desconto e monta a linha do carrinho.
+                // add_item() recebe item_id e discount por referencia — precisam ser variaveis.
+                $itemIdRef = $itemId;
+                $descontoRef = $this->numeroLocale($desconto);
+
                 $ok = $this->sale_lib->add_item(
-                    $itemId,
+                    $itemIdRef,
                     $localId,
                     $this->numeroLocale($quantidade),
-                    $this->numeroLocale($desconto),
+                    $descontoRef,
                     $descontoTipo,
                     PRICE_MODE_STANDARD,
                     null,
@@ -419,9 +430,15 @@ class Vendas_controller extends Api_base_controller
     }
 
     /** JSON usa ponto decimal; o PDV interpreta no locale da loja (virgula). */
+    /**
+     * Valores numericos chegam em JSON (sempre ponto: "19.90"). O nucleo do PDV
+     * (bcmul/bcsub em Sale_lib) tambem trabalha com ponto — a virgula pt_BR so
+     * aparece na formatacao de saida. Aqui so normalizamos virgula para ponto,
+     * para aceitar as duas formas sem quebrar o bcmath.
+     */
     private function numeroLocale(string $valor): string
     {
-        return str_contains($valor, ',') ? $valor : str_replace('.', ',', $valor);
+        return str_replace(',', '.', $valor);
     }
 
     /** Locais de estoque do dono do token (mesma ideia do Itens_controller). */

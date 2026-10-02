@@ -156,16 +156,14 @@ class Clientes_controller extends Api_base_controller
     {
         $c = $this->corpo();
 
-        $primeiroNome = trim((string) ($c['nome'] ?? $c['first_name'] ?? ''));
-        $sobrenome = trim((string) ($c['sobrenome'] ?? $c['last_name'] ?? ''));
+        // no PATCH so valida nome se ele veio no corpo; senao herda o que ja existe
+        $atual = $customerId === NEW_ENTRY ? [] : (array) $this->customer->get_info($customerId);
+
+        $primeiroNome = trim((string) ($c['nome'] ?? $c['first_name'] ?? ($atual['first_name'] ?? '')));
+        $sobrenome = trim((string) ($c['sobrenome'] ?? $c['last_name'] ?? ($atual['last_name'] ?? '')));
 
         if ($primeiroNome === '') {
             return $this->erro('nome (razao social) e obrigatorio');
-        }
-
-        // na criacao a tela exige nome; no resto herda o que ja existe
-        if ($customerId !== NEW_ENTRY) {
-            $atual = (array) $this->customer->get_info($customerId);
         }
 
         $email = strtolower(trim((string) ($c['email'] ?? ($atual['email'] ?? ''))));

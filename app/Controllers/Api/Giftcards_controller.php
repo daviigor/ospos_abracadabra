@@ -60,16 +60,29 @@ class Giftcards_controller extends Api_base_controller
         $limit = max(1, min((int) ($this->request->getGet('limit') ?? 20), 100));
         $offset = max(0, (int) ($this->request->getGet('offset') ?? 0));
 
-        $total = $busca === ''
-            ? $this->giftcard->get_total_rows()
-            : $this->giftcard->get_found_rows($busca);
+        $db = db_connect();
+        $pref = $db->getPrefix();
+        $builder = $db->table($pref . 'giftcards AS giftcards');
+        $builder->select('giftcards.giftcard_id, giftcards.giftcard_number, giftcards.value,
+            giftcards.person_id, giftcards.record_time,
+            CONCAT(people.first_name, " ", people.last_name) AS person_name', false);
+        $builder->join($pref . 'people AS people', 'people.person_id = giftcards.person_id', 'left');
 
-        $linhas = $busca === ''
-            ? $this->giftcard->get_all($limit, $offset)->getResultArray()
-            : $this->giftcard->search($busca, $limit, $offset)->getResultArray();
+        if ($busca !== '') {
+            $builder->groupStart()
+                ->like('giftcards.giftcard_number', $busca)
+                ->orLike('people.first_name', $busca)
+                ->orLike('people.last_name', $busca)
+                ->groupEnd();
+        }
+
+        $total = $builder->countAllResults(false);
+
+        $builder->orderBy('giftcards.giftcard_id', 'DESC');
+        $builder->limit($limit, $offset);
 
         $giftcards = [];
-        foreach ($linhas as $linha) {
+        foreach ($builder->get()->getResultArray() as $linha) {
             $giftcards[] = $this->formatar($linha);
         }
 
@@ -161,9 +174,10 @@ class Giftcards_controller extends Api_base_controller
             return $this->erro('valor da recarga tem que ser maior que zero');
         }
 
-        if (!$this->giftcard->decrementGiftcardValue((string) $numero, $delta)) {
-            return $this->erro('o PDV recusou a recarga');
-        }
+        // decrementGiftcardValue subtrai (é o debito do PDV ao pagar com cartao).
+        // Recarga é o inverso: soma o delta ao saldo atual.
+        $saldoAtual = (float) $this->giftcard->get_giftcard_value((string) $numero);
+        $this->giftcard->update_giftcard_value((string) $numero, $saldoAtual + $delta);
 
         return $this->ok([
             'success'     => true,
