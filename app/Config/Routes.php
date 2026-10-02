@@ -78,6 +78,8 @@ $routes->delete('api/giftcards/(:num)', 'Api\Giftcards_controller::deleteIndex/$
 // documentacao navegavel dentro do proprio PDV
 $routes->get('api', 'Api\Docs_controller::getIndex');
 $routes->get('mcp', 'Api\Docs_controller::getMcp');
+// gera o servidor-mcp-pdv.js ja com a URL base escolhida na pagina /mcp
+$routes->get('mcp/servidor.js', 'Api\Docs_controller::getServidor');
 
 $routes->add('no_access/index/(:segment)', 'No_access::index/$1');
 $routes->add('no_access/index/(:segment)/(:segment)', 'No_access::index/$1/$2');

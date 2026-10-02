@@ -80,9 +80,9 @@ class Filters extends BaseFilters
             // api/* e mcp sao publicos de proposito: o que barra e o Bearer JWT
             // (rotas de dados) ou nada (paginas de documentacao). Sem sessao e
             // sem CSRF, que quebrariam chamadas de IA.
-            'csrf' => ['except' => 'login|migrate|api*|mcp'],
-            'invalidchars' => ['except' => 'api*|mcp'],
-            'isLoggedIn' => ['except' => 'login|migrate|api*|mcp'],
+            'csrf' => ['except' => 'login|migrate|api*|mcp*'],
+            'invalidchars' => ['except' => 'api*|mcp*'],
+            'isLoggedIn' => ['except' => 'login|migrate|api*|mcp*'],
         ],
         'after' => [
             'toolbar',

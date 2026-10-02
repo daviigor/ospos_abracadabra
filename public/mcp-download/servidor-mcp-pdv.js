@@ -6,16 +6,39 @@
  * JSON do proprio PDV (/api), que aplica as regras de negocio e permissoes
  * do sistema. Se o PDV esta de pe, isto funciona.
  *
- * ── ANTES DE RODAR ────────────────────────────────────────────────────
- * Edite as duas constantes abaixo. O token se obtem em <PDV_URL>/api
- * (POST /api/auth/token com usuario e senha do PDV).
+ * ── ENDERECO E TOKEN ──────────────────────────────────────────────────
+ * Nada esta fixo no arquivo. Informe na hora de rodar, por variavel de
+ * ambiente ou por argumento:
+ *
+ *   PDV_URL=https://seu-pdv.com PDV_TOKEN=eyJ... node servidor-mcp-pdv.js
+ *   node servidor-mcp-pdv.js --url https://seu-pdv.com --token eyJ...
+ *
+ * Se voce baixou este arquivo pela pagina /mcp do PDV, a URL ja vem
+ * preenchida como padrao — basta o token.
+ *
+ * O token se obtem em <PDV_URL>/api (POST /api/auth/token com usuario e
+ * senha do PDV).
  *
  * Requisitos: Node 18+. Nao instala nada.
  * ──────────────────────────────────────────────────────────────────────
  */
 
-const PDV_URL = 'http://localhost';        // <<< endereco do seu PDV
-const PDV_TOKEN = 'COLE_SEU_TOKEN_JWT';    // <<< token gerado em /api
+const PDV_URL_PADRAO = '%%PDV_URL%%';
+const PDV_TOKEN_PADRAO = '%%PDV_TOKEN%%';
+
+function arg(nome) {
+    const i = process.argv.indexOf(`--${nome}`);
+    return i !== -1 && process.argv[i + 1] ? process.argv[i + 1] : '';
+}
+
+const PDV_URL = (arg('url') || process.env.PDV_URL || PDV_URL_PADRAO || 'http://localhost').replace(/\/+$/, '');
+const PDV_TOKEN = arg('token') || process.env.PDV_TOKEN || PDV_TOKEN_PADRAO || '';
+
+if (!PDV_TOKEN || PDV_TOKEN === 'COLE_SEU_TOKEN_JWT') {
+    process.stderr.write(
+        'aviso: sem token. Passe PDV_TOKEN=... ou --token ... (gere em ' + PDV_URL + '/api)\n'
+    );
+}
 
 const { createInterface } = require('readline');
 
